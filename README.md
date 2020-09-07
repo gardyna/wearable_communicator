@@ -4,6 +4,16 @@ Communication layer between a Flutter project for Android and IOS.
 
 This will send messages and/or data to the platform specific communication methood.
 
+## Installation
+
+### Android
+
+[TODO]
+
+### IOS
+
+[TODO]
+
 ## How to use
 
 ### Sending messages
