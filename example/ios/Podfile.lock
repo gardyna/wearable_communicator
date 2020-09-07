@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - wearableCommunicator (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - wearableCommunicator (from `.symlinks/plugins/wearableCommunicator/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  wearableCommunicator:
+    :path: ".symlinks/plugins/wearableCommunicator/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  wearableCommunicator: eb8e6afa9785c4433fcfe75aea945625090c0ba9
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.9.1
