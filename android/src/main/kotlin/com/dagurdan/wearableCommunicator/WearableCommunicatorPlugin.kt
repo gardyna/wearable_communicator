@@ -214,8 +214,18 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
     override fun onDataChanged(events: DataEventBuffer) {
         events.forEach { event ->
             if (event.type == DataEvent.TYPE_CHANGED) {
-                val dataItem = DataMapItem.fromDataItem(event.dataItem)
-                Log.d(TAG, dataItem.dataMap.toString())
+                val datamap = DataMapItem.fromDataItem(event.dataItem).dataMap
+                val map = hashMapOf<String, Any>()
+                for (key in datamap.keySet()) {
+                    map[key] = datamap.get(key)
+                }
+                dataListenerIds.forEach { id ->
+                    channel.invokeMethod("dataReceived", hashMapOf(
+                        "id" to id,
+                        "args" to map
+                    ))
+                }
+                
             }
         }
     }

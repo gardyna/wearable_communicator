@@ -76,7 +76,7 @@ WearableCommunicator.setData("/actor/cage",{
 * [ ] recieve messages from watchOS
 * [X] set android data layer items
 * [ ] set IOS application context
-* [ ] recieve data layer events from wearOS
+* [X] recieve data layer events from wearOS
 * [ ] recieve data/configuration changes from watchOS
 * [ ] Handle complex/nested data structures
 
