@@ -13,6 +13,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import org.json.JSONObject
+import kotlin.reflect.typeOf
 
 /** WearableCommunicatorPlugin */
 public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, MessageClient.OnMessageReceivedListener, DataClient.OnDataChangedListener {
@@ -119,11 +120,14 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
     private fun setData(call: MethodCall, result: Result) {
         try {
             val data = call.argument<HashMap<String, Any>>("data") ?: return
+            Log.d(TAG, data.toString())
             val name = call.argument<String>("path") ?: return
             val request = PutDataMapRequest.create(name).run {
                 loop@ for ((key, value) in data) {
                     when(value) {
-                        is String -> dataMap.putString(key, value)
+                        is String -> {
+                            dataMap.putString(key, value)
+                        }
                         is Int -> dataMap.putInt(key, value)
                         is Float -> dataMap.putFloat(key, value)
                         is Double -> dataMap.putDouble(key, value)
@@ -145,6 +149,7 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
                             }
                         }
                         else -> {
+                            Log.d(TAG, "could not translate value of type ${value.javaClass.name}")
                         }
                     }
                 }
@@ -208,7 +213,10 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
 
     override fun onDataChanged(events: DataEventBuffer) {
         events.forEach { event ->
-            Log.d(TAG, event.toString())
+            if (event.type == DataEvent.TYPE_CHANGED) {
+                val dataItem = DataMapItem.fromDataItem(event.dataItem)
+                Log.d(TAG, dataItem.dataMap.toString())
+            }
         }
     }
 }
