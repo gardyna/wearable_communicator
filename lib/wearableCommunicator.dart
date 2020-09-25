@@ -22,28 +22,25 @@ class WearableCommunicator {
   /// set constant data
   /// the data must conform to https://api.flutter.dev/flutter/services/StandardMessageCodec-class.html
   /// android: sets data on data layer by the name
-  static void setData(String path,  Map<String, dynamic> data) async {
+  static void setData(String path, Map<String, dynamic> data) async {
     if (!path.startsWith("/")) {
       path = "/" + path;
     }
-    await _channel.invokeListMethod('setData', {
-      "path": path,
-      "data": data
-    });
+    await _channel.invokeListMethod('setData', {"path": path, "data": data});
   }
 }
 
-
 typedef void Listener(dynamic msg);
-typedef void MultiUseCallback(dynamic msg);
+typedef void MultiUseCallback(String msg);
 typedef void CancelListening();
+
 class WearableListener {
   static const _channel = const MethodChannel("wearableCommunicator");
   static int _nextCallbackId = 0;
   static Map<int, MultiUseCallback> _messageCallbacksById = new Map();
   static Map<int, MultiUseCallback> _dataCallbacksById = new Map();
 
-  WearableListener(){
+  WearableListener() {
     _channel.setMethodCallHandler(_methodCallHandler);
   }
 
@@ -56,7 +53,8 @@ class WearableListener {
         _dataCallbacksById[call.arguments["id"]](call.arguments["args"]);
         break;
       default:
-        print('TestFairy: Ignoring invoke from native. This normally shouldn\'t happen.');
+        print(
+            'TestFairy: Ignoring invoke from native. This normally shouldn\'t happen.');
     }
   }
 
@@ -70,6 +68,7 @@ class WearableListener {
       _messageCallbacksById.remove(currentListenerId);
     };
   }
+
   static Future<void> listenForDataLayer(MultiUseCallback callback) async {
     _channel.setMethodCallHandler(_methodCallHandler);
     int currentListenerId = _nextCallbackId++;

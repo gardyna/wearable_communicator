@@ -2,8 +2,7 @@ package com.dagurdan.wearableCommunicator
 
 import android.app.Activity
 import androidx.annotation.NonNull
-import com.google.android.gms.wearable.PutDataMapRequest
-import com.google.android.gms.wearable.Wearable
+import com.google.android.gms.wearable.*
 import io.flutter.Log
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -16,7 +15,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import org.json.JSONObject
 
 /** WearableCommunicatorPlugin */
-public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
+public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, ActivityAware, MessageClient.OnMessageReceivedListener, DataClient.OnDataChangedListener {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -24,9 +23,11 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
   private lateinit var channel : MethodChannel
 
   private var activity: Activity? = null
+    private val messageListenerIds = mutableListOf<Int>()
+    private val dataListenerIds = mutableListOf<Int>()
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "wearableCommunicator")
+    channel = MethodChannel(flutterPluginBinding.flutterEngine.dartExecutor, "wearableCommunicator")
     channel.setMethodCallHandler(this);
   }
 
@@ -45,6 +46,7 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
       val channel = MethodChannel(registrar.messenger(), "wearableCommunicator")
       channel.setMethodCallHandler(WearableCommunicatorPlugin())
     }
+      const val TAG = "WearableCommunicator"
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -59,10 +61,11 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
             setData(call, result)
         }
         "listenMessages" -> {
-            registerMessageListener(call, result)
+            registerMessageListener(call)
+            result.success(null)
         }
         "listenData" -> {
-            registerDataLayerListener(call, result)
+            registerDataLayerListener(call)
         }
         else -> {
           result.notImplemented()
@@ -70,14 +73,21 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
     }
   }
 
-    private fun registerMessageListener(call: MethodCall, result: Result) {
+    private fun registerMessageListener(call: MethodCall) {
+        try {
+            val id = call.arguments<Int>()
+            messageListenerIds.add(id)
+        } catch (ex: Exception) {
+            Log.e(TAG, ex.localizedMessage, ex)
+        }
     }
 
-    private fun registerDataLayerListener(call: MethodCall, result: Result) {
-        Wearable.getDataClient(activity!!).addListener { dataEventBuffer ->
-            dataEventBuffer.forEach { event ->
-                channel.invokeMethod("dataReceived", event.dataItem.data)
-            }
+    private fun registerDataLayerListener(call: MethodCall) {
+        try {
+            val id = call.arguments<Int>()
+            dataListenerIds.add(id)
+        } catch (ex: Exception) {
+            Log.e(TAG, ex.localizedMessage, ex)
         }
     }
 
@@ -91,8 +101,9 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
                 Wearable.getNodeClient(activity!!).connectedNodes.addOnSuccessListener { nodes ->
                     nodes.forEach { node ->
                         val json = JSONObject(argument).toString()
-                        client.sendMessage(node.id, "MessageChannel", json.toByteArray())
-                        Log.d("WearableCommunicator","sent message: $json to ${node.displayName}")
+                        client.sendMessage(node.id, "/MessageChannel", json.toByteArray()).addOnSuccessListener {
+                            Log.d(TAG,"sent message: $json to ${node.displayName}")
+                        }
                     }
                     result.success(null)
                 }.addOnFailureListener { ex ->
@@ -100,7 +111,7 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
                 }
 
             } catch (ex: Exception) {
-                Log.d("WearableCommunicator", "Failed to send message", ex)
+                Log.d(TAG, "Failed to send message", ex)
             }
         }
     }
@@ -139,31 +150,66 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
                 }
                 asPutDataRequest()
             }
-            Wearable.getDataClient(activity!!).putDataItem(request)
+            Wearable.getDataClient(activity!!).putDataItem(request).addOnSuccessListener {
+                Log.d(TAG, "Set data on wear")
+            }
             result.success(null)
         } catch (ex: Exception) {
-            Log.d("WearableCommunicator", "Failed to send message", ex)
+            Log.e(TAG, "Failed to send message", ex)
         }
     }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
-  }
+      override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        channel.setMethodCallHandler(null)
+      }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
+        startWearableClients(activity!!)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
+        val a = activity ?: return
+        detachWearableClients(a)
         activity = null
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
         activity = binding.activity
+        startWearableClients(activity!!)
     }
 
     override fun onDetachedFromActivity() {
+        val a = activity ?: return
+        detachWearableClients(a)
         activity = null
+    }
+
+    private fun startWearableClients(a: Activity) {
+        Wearable.getMessageClient(a).addListener(this)
+        Wearable.getDataClient(a).addListener(this)
+    }
+
+    private fun detachWearableClients(a: Activity) {
+        Wearable.getMessageClient(a).removeListener(this)
+        Wearable.getDataClient(a).removeListener(this)
+    }
+
+    override fun onMessageReceived(message: MessageEvent) {
+        val data = String(message.data)
+        messageListenerIds.forEach { id ->
+            channel.invokeMethod("messageReceived", hashMapOf(
+                    "id" to id,
+                    "args" to data
+            ))
+        }
+
+    }
+
+    override fun onDataChanged(events: DataEventBuffer) {
+        events.forEach { event ->
+            Log.d(TAG, event.toString())
+        }
     }
 }
 
