@@ -1,6 +1,6 @@
 # wearableCommunicator
 
-Communication layer between a Flutter project for Android and IOS.
+Communication layer between a Flutter project for Android and IOS and a companion wearable app.
 
 This will send and recieve messages and/or data to the platform specific wearable communication methood. It uses the wearable data layer and messaging API's on android devices and WCSession on IPhones
 
