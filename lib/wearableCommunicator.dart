@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:flutter/services.dart';
 
 class WearableCommunicator {
@@ -31,7 +31,7 @@ class WearableCommunicator {
 }
 
 typedef void Listener(dynamic msg);
-typedef void MultiUseCallback(String msg);
+typedef void MultiUseCallback(dynamic msg);
 typedef void CancelListening();
 
 class WearableListener {
@@ -47,10 +47,29 @@ class WearableListener {
   static Future<void> _methodCallHandler(MethodCall call) async {
     switch (call.method) {
       case 'messageReceived':
-        _messageCallbacksById[call.arguments["id"]](call.arguments["args"]);
+        if (call.arguments["args"] is String) {
+          try {
+            Map value = json.decode(call.arguments["args"]);
+            _messageCallbacksById[call.arguments["id"]](value);
+          } catch (Exception) {
+            _messageCallbacksById[call.arguments["id"]](call.arguments["args"]);
+          }
+        } else {
+          _messageCallbacksById[call.arguments["id"]](call.arguments["args"]);
+        }
         break;
       case 'dataReceived':
-        _dataCallbacksById[call.arguments["id"]](call.arguments["args"]);
+        if (call.arguments["args"] is String) {
+          try {
+            Map value = json.decode(call.arguments["args"]);
+            _dataCallbacksById[call.arguments["id"]](value);
+          } catch (Exception) {
+            _dataCallbacksById[call.arguments["id"]](call.arguments["args"]);
+          }
+        } else {
+          _dataCallbacksById[call.arguments["id"]](call.arguments["args"]);
+        }
+
         break;
       default:
         print(

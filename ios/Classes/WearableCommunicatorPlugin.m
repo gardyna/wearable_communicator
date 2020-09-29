@@ -10,6 +10,10 @@
 
 @implementation WearableCommunicatorPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  [SwiftWearableCommunicatorPlugin registerWithRegistrar:registrar];
+    if (@available(iOS 9.0, *)) {
+        [SwiftWearableCommunicatorPlugin registerWithRegistrar:registrar];
+    } else {
+        // Fallback on earlier versions
+    }
 }
 @end
