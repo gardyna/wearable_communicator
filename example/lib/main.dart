@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:wearableCommunicator/wearableCommunicator.dart';
+import 'package:wearableCommunicator/wearable_communicator.dart';
 
 void main() {
   runApp(MyApp());
