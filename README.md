@@ -107,6 +107,7 @@ WearableListener.listenForDataLayer((data) {
 * [ ] Handle complex/nested data structures (not nececary for initial release)
 * [ ] fetch data items from permanent storage (data layer/app config) note: low priority
 
+
 ## Author
 
 🕴🏻 [Dagur Arinbjörn Daníelsson](https://github.com/gardyna)\
