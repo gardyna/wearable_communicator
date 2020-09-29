@@ -125,5 +125,4 @@ extension SwiftWearableCommunicatorPlugin: WCSessionDelegate {
             ])
         }
     }
-    
 }

@@ -99,11 +99,11 @@ WearableListener.listenForDataLayer((data) {
 * [X] Send messages from android though the messageClient
 * [X] recieve messages from WearOS
 * [X] Send messages from IOS though the messageClient
-* [ ] recieve messages from watchOS (In progress untested)
+* [X] recieve messages from watchOS
 * [X] set android data layer items
-* [ ] set IOS application context (In progress untested)
+* [X] set IOS application context
 * [X] recieve data layer events from wearOS
-* [ ] recieve data/configuration changes from watchOS (In progress untested)
+* [X] recieve data/configuration changes from watchOS (updates are not instant)
 * [ ] Handle complex/nested data structures (not nececary for initial release)
 * [ ] fetch data items from permanent storage (data layer/app config) note: low priority
 
