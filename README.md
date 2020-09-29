@@ -108,6 +108,7 @@ WearableListener.listenForDataLayer((data) {
 * [X] recieve data/configuration changes from watchOS (updates are not instant)
 * [ ] Handle complex/nested data structures (not nececary for initial release)
 * [ ] fetch data items from permanent storage (data layer/app config) note: low priority
+* [ ] set up background service to sync data in background
 
 ## Author
 
