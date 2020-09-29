@@ -20,6 +20,7 @@ This will send and recieve messages and/or data to the platform specific wearabl
 ## How to use
 
 * For information on how to access the sent data on wearable devices please see the example project
+* It is recommended to not rely on instantaneous transfer of data on IOS as applicationContext waits for a "low intensity situation" to set this value between app and watch
 
 ### 📤 Sending messages
 
@@ -56,6 +57,7 @@ WearableListener.listenForMessage((msg) {
 Use the static method `WearableCommunicator.setData(String path, Map<String, dynamic> message);` to set a data item with specified path (use wearOS compatible data layer paths)
 
 * (IOS specific) the path variable is used as a key within the application context dictionary
+* (IOS specific) data transfer is not instant and will wait for a "low intensity" moment. use this function only to set permanent low priority information
 
 #### example set data
 
@@ -106,7 +108,6 @@ WearableListener.listenForDataLayer((data) {
 * [X] recieve data/configuration changes from watchOS (updates are not instant)
 * [ ] Handle complex/nested data structures (not nececary for initial release)
 * [ ] fetch data items from permanent storage (data layer/app config) note: low priority
-
 
 ## Author
 
