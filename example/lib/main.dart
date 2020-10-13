@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wearableCommunicator/wearable_communicator.dart';
+import 'package:wearable_communicator/wearable_communicator.dart';
 
 void main() {
   runApp(MyApp());
@@ -60,6 +60,7 @@ class _MyAppState extends State<MyApp> {
                   primaryFocus.unfocus(disposition: UnfocusDisposition.scope);
                   WearableCommunicator.sendMessage({
                     "text": value,
+                    "atTime": DateTime.now().add(Duration(hours: 1))
                   });
                 },
               ),
