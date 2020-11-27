@@ -1,4 +1,4 @@
-name: wearableCommunicator_example
+name: wearable_communicator_example
 description: Demonstrates how to use the wearableCommunicator plugin.
 
 # The following line prevents the package from being accidentally published to
@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  wearableCommunicator:
+  wearable_communicator:
     # When depending on this package from a real application you should use:
     #   wearableCommunicator: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints

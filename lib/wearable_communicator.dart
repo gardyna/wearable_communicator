@@ -2,14 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
-class WearableCommunicator {
-  static const MethodChannel _channel =
-      const MethodChannel('wearableCommunicator');
 
-  static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
-    return version;
-  }
+/// Static class to send messages and data to wearables
+class WearableCommunicator {
+  static const MethodChannel _channel = const MethodChannel('wearableCommunicator');
 
   /// send message to watch
   /// the message must conform to https://api.flutter.dev/flutter/services/StandardMessageCodec-class.html
@@ -21,7 +17,7 @@ class WearableCommunicator {
 
   /// set constant data
   /// the data must conform to https://api.flutter.dev/flutter/services/StandardMessageCodec-class.html
-  /// android: sets data on data layer by the name
+  /// android: sets data on data layer by the path
   static void setData(String path, Map<String, dynamic> data) async {
     if (!path.startsWith("/")) {
       path = "/" + path;
@@ -30,10 +26,11 @@ class WearableCommunicator {
   }
 }
 
-typedef void Listener(dynamic msg);
-typedef void MultiUseCallback(dynamic msg);
-typedef void CancelListening();
 
+/// typedef for listener callbacks
+typedef void MultiUseCallback(dynamic msg);
+
+/// Holder for wearable data and messages
 class WearableListener {
   static const _channel = const MethodChannel("wearableCommunicator");
   static int _nextCallbackId = 0;
@@ -77,6 +74,8 @@ class WearableListener {
     }
   }
 
+  /// register a callback function for wearable messages
+  /// returns a function to stop the listener
   static Future<void> listenForMessage(MultiUseCallback callback) async {
     _channel.setMethodCallHandler(_methodCallHandler);
     int currentListenerId = _nextCallbackId++;
@@ -88,6 +87,8 @@ class WearableListener {
     };
   }
 
+  /// register a function for data layer events
+  /// returns a function to stop the listener
   static Future<void> listenForDataLayer(MultiUseCallback callback) async {
     _channel.setMethodCallHandler(_methodCallHandler);
     int currentListenerId = _nextCallbackId++;

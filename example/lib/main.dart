@@ -59,8 +59,7 @@ class _MyAppState extends State<MyApp> {
                 onPressed: () {
                   primaryFocus.unfocus(disposition: UnfocusDisposition.scope);
                   WearableCommunicator.sendMessage({
-                    "text": value,
-                    "atTime": DateTime.now().add(Duration(hours: 1))
+                    "text": value
                   });
                 },
               ),

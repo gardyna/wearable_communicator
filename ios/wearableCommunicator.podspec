@@ -3,7 +3,7 @@
 # Run `pod lib lint wearableCommunicator.podspec' to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'wearableCommunicator'
+  s.name             = 'wearable_communicator'
   s.version          = '0.0.1'
   s.summary          = 'A new flutter plugin project.'
   s.description      = <<-DESC
