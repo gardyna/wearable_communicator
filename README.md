@@ -2,7 +2,7 @@
 
 Communication layer between a Flutter project for Android and IOS and a companion wearable app.
 
-This will send and recieve messages and/or data to the platform specific wearable communication methood. It uses the wearable data layer and messaging API's on android devices and WCSession on IPhones
+This will send and receive messages and/or data to the platform specific wearable communication method. It uses the wearable data layer and messaging API's on android devices and WCSession on IPhones
 
 ## Install
 
@@ -37,13 +37,13 @@ WearableCommunicator.sendMessage({
 });
 ```
 
-### 📨 Recieve message
+### 📨 Receive message
 
 Use the static method `WearableCommunicator.listenForMessage;` to register a message listener function.
 
 * (android specific) if the message data is a string then the library will assume it is JSON and try to convert it. if that operation fails the message data will be sent to the listener unchanged.
 
-#### Recieve message example
+#### Receive message example
 
 ```dart
 // msg is either a Map<String, dynamic> or a string (make sure to check for that when using the library)
