@@ -46,31 +46,26 @@ class _MyAppState extends State<MyApp> {
             children: [
               TextField(
                 controller: _controller,
-                decoration: InputDecoration(
-                    border: InputBorder.none, labelText: 'Enter some text'),
+                decoration: InputDecoration(border: InputBorder.none, labelText: 'Enter some text'),
                 onChanged: (String val) async {
                   setState(() {
                     value = val;
                   });
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text('Send message to wearable'),
                 onPressed: () {
                   primaryFocus.unfocus(disposition: UnfocusDisposition.scope);
-                  WearableCommunicator.sendMessage({
-                    "text": value
-                  });
+                  WearableCommunicator.sendMessage({"text": value});
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text('set data on wearable'),
                 onPressed: () {
                   primaryFocus.unfocus(disposition: UnfocusDisposition.scope);
                   WearableCommunicator.setData("message", {
-                    "text": value != ""
-                        ? value
-                        : "test", // ensure we have at least empty string
+                    "text": value != "" ? value : "test", // ensure we have at least empty string
                     "integerValue": 1,
                     "intList": [1, 2, 3],
                     "stringList": ["one", "two", "three"],

@@ -77,7 +77,9 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
     private fun registerMessageListener(call: MethodCall) {
         try {
             val id = call.arguments<Int>()
-            messageListenerIds.add(id)
+            if (id != null) {
+                messageListenerIds.add(id)
+            }
         } catch (ex: Exception) {
             Log.e(TAG, ex.localizedMessage, ex)
         }
@@ -86,7 +88,9 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
     private fun registerDataLayerListener(call: MethodCall) {
         try {
             val id = call.arguments<Int>()
-            dataListenerIds.add(id)
+            if (id != null) {
+                dataListenerIds.add(id)
+            }
         } catch (ex: Exception) {
             Log.e(TAG, ex.localizedMessage, ex)
         }
@@ -108,7 +112,7 @@ public class WearableCommunicatorPlugin: FlutterPlugin, MethodCallHandler, Activ
                     }
                     result.success(null)
                 }.addOnFailureListener { ex ->
-                    result.error(ex.message, ex.localizedMessage, ex)
+                    result.error(ex.message.toString(), ex.localizedMessage, ex)
                 }
 
             } catch (ex: Exception) {
